@@ -1,0 +1,31 @@
+1)select sum(pc.weight) as picked_corn_weight from picked as pc inner join plant p on pc.plantFK=p.plantid
+where p.name='Corn';
+
+2)update picked set locationFK=(select locationid from Location where name="North") where plantFK=
+(select plantid from plant where name="Tomato");
+
+3)alter table Gardener add column Expr int(10);
+alter table Gardener modify column Expr varchar(10);
+
+4)select p.name as plant_name from plant as p inner join planted as plt
+on p.plantid=plt.plantFK where seeds<20 and date1="14-APR-2012";
+
+5)select sum(sunlight),sum(water) from plant where name like "c%" or name like "R%";
+
+6)select p.name,sum(pt.seeds) from planted as pt inner join plant as p on 
+p.plantid = pt.plantFK group by p.name order by p.name
+
+7)select p.name,pc.amount/pl.seeds as Avg_items from planted as pl inner join 
+picked as pc on pl.plantFK=pc.plantFK inner join plant as p 
+on p.plantid=pl.plantFK group by p.name
+
+8)select g.name,p.name,pc.date1,pc.amount from plant as p inner join picked as pc on p.plantid = pc.plantFK
+inner join Gardener as g on g.gardenerid = pc.gardenerFK where  g.name="Tim" and p.name="Carrot" or p.name="Radish"
+
+9)select  distinct g.name from Gardener as g inner join planted as p on g.gardenerid=p.gardenerFK
+inner join picked as pc  on g.gardenerid=pc.gardenerFK where pc.locationFK in (select locationFK from picked);
+
+10)create view pc_view as
+select p.name from plant as p inner join picked as pc on p.plantid=pc.plantFK
+where pc.locationFK!=(select locationid from Location where name='West') and  pc.date1  not like "%AUG%" ;
+select * from pc_view;

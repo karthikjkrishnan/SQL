@@ -1,0 +1,36 @@
+1)select name from friend as f ,highschooler as h where f.id1=h.id
+and f.id2 in (select h.id from highschooler as h where h.name="Gabriel");
+
+2)select h.ID,h.name,h.grade,h1.ID,h1.name,h1.grade 
+from highschooler as h 
+inner join 
+likes as l on h.id=l.id1 
+inner join highschooler as h1
+on h1.id=l.id2
+and (h.grade-h1.grade)>=2;
+
+3)select distinct h1.name ,h1.id,h2.name,h2.id from highschooler as h1,highschooler as h2,likes as l1,likes as l2
+where (h1.id=l1.id1 and h2.id=l1.id2) and (h2.id=l2.id1 and h1.id=l2.id2) and h1.name<h2.name
+order by h1.name,h2.name;
+
+4)select id,name,grade from highschooler where id not in (select distinct id1 from likes union distinct select id2 from likes) order by grade,name;
+
+5)select distinct h1.name ,h1.id,h2.name,h2.id from highschooler as h1,highschooler AS h2,likes as l1,likes as l2
+where (h1.id=l1.id1 and h2.id=l1.id2) and h2.id not in (select id1 from likes);
+
+6)select name ,grade from highschooler as h1 where id not in (select id1 from highschooler as h2,Friend where
+h1.id=Friend.id1 and h2.id=Friend.id2 and h1.grade!=h2.grade)order by grade,name
+
+8)select count(*) - count(distinct name)from highschooler;
+
+9)select name, grade 
+from (select ID2, count(ID2) as numLiked from Likes group by ID2)as st, Highschooler
+where numLiked>1 and ID2=ID;
+
+10)select h1.name, h1.grade, h2.name, h2.grade, h3.name, h3.grade from highschooler as h1,highschooler as h2,likes as l,likes as l1,highschooler as h3
+where h1.id=l.id1 and h2.id=l.id2 and (h2.id = l1.id1 and h3.id = l1.id2 and h3.id <> h1.id);
+
+11)select name, grade from highschooler h1 where grade not in (select h2.grade from friend, highschooler h2 where h1.id = friend.id1 and h2.id = friend.id2);
+
+12)select H1.name, H1.grade, H2.name, H2.grade, H3.name, H3.grade from highschooler as h1,highschooler as h2,likes as l,likes as l1,highschooler as h3
+where h1.id=l.id1 and h2.id=l.id2 AND (H2.ID = l1.ID1 AND H3.ID = L1.ID2 AND H3.ID <> H1.ID);

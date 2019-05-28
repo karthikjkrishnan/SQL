@@ -1,0 +1,56 @@
+1)SELECT m.m_name as organiser
+FROM   concert c
+JOIN   musician m ON m.m_no = c.concert_orgniser
+WHERE  concert_venue = 'Assembly Rooms'
+AND    con_date > '1997-02-01';
+
+2)SELECT m_name, instrument FROM musician JOIN performer ON m_no = perf_is 
+JOIN place ON place_no = born_in
+WHERE instrument IN ("guitar", "violin") 
+AND place_country ="England";
+
+
+3)select m.m_name,p.place_town,c.con_date from musician as m ,concert as c,place as p
+where m.m_no=c.concert_orgniser
+and c.concert_in = p.place_no
+and place_country='USA'
+
+4)select con.con_date,con.concert_venue,com.c_title,m_name from 
+concert con inner join composition com on con.concert_in=com.c_in 
+inner join musician m on m.m_no=con.concert_orgniser where m.m_name='Andy Jones';
+
+5)select count(perf_is) ,instrument from performer group by instrument;
+
+
+6)select m.m_name from musician as m ,performer as p 
+where m.m_no=p.perf_is
+and  m.died is null
+and p.instrument in (select p.instrument from musician as m ,performer as p 
+where m.m_no=p.perf_is and m.m_name='Theo Mengel') 
+and m.m_name!='Theo Mengel'
+
+7)select count(player) as p_count,band_id,avg(player) as aveg ,b.band_name from plays_in as p
+inner join band as b on p.player=b.band_no group by band_id having p_count>aveg order by band_id;
+
+8)select distinct m.m_name from musician as m,composer as co ,has_composed as h,place as p
+where m.m_no=co.comp_is 
+and co.comp_no=h.cmpr_no 
+and m.living_in=p.place_no
+and p.place_country='England';
+
+
+9)select instrument,count(*) as cou from performer group by instrument having cou in(select min(c) 
+from(select instrument,count(*) as c from performer group by instrument) as d);
+
+
+10)select co.c_title,b.band_name from musician m inner join composer c on c.comp_is=m.m_no 
+inner join has_composed h on h.cmpr_no=c.comp_no and m.m_name='Sue Little' inner join 
+composition co on co.c_no=h.cmpn_no inner join performance 
+pe on pe.performed=co.c_no inner join band b on pe.gave=b.band_no;
+
+
+11)select distinct m.m_name,p.place_town from musician as m,place as p,performer as pe
+where m.born_in=p.place_no and pe.perf_is=m.m_no and 
+p.place_town=(select p.place_town from musician as m,place as p
+where m.born_in=p.place_no 
+and m.m_name='James First')

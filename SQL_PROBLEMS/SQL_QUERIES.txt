@@ -1,7 +1,11 @@
-1)select employee.last_name,employee.job_code from employee  LEFT OUTER JOIN department  ON employee.department_number=department.department_number where 
-employee.job_code IS NULL order by employee.last_name ASC;
+1)select concat(e.first_name,e.last_name) from employee as e 
+left outer join jobtype as j on e.job_code=j.job_code
+where e.job_code is null or e.job_code not in (select job_code from jobtype);
 
-2)select department.* from department where department_number not in(select department_number from employee);
+2)SELECT D.*
+FROM department D
+WHERE
+ NOT EXISTS (SELECT * FROM employee e WHERE D.department_number = E.department_number);
 
 3)select employee.last_name,employee.first_name,department.department_number from employee inner join department on employee.department_number=
 department.department_number;
@@ -13,8 +17,9 @@ department.department_number;
 6)select employee.employee_number,department.department_number,employee.job_code from employee 
 inner join department on employee.department_number=department.department_number order by employee.job_code desc ;
 
-7)select employee_number from employee where employee_number in (select manager_employee_number from department);
-select distinct employee_number from employee Inner join department on employee.employee_number=department.manager_employee_number;
+7)select employee_number,department_number,job_code
+ from employee where department_number in (select  department_number from employee group by department_number having count(*) =
+(select max(c) from (select count(*) as c from employee group by department_number)as d ))order by job_code;
 
 8)select concat(first_name,',',last_name) as 'FullName' from employee where last_name like '%ra%'; 
 
@@ -55,7 +60,8 @@ where department_name like '%support%');
 20)select concat(first_name,'.',last_name) as employee_name from employee where department_number=2
 
 
-21)SELECT CASE WHEN  not EXISTS(select * from employee where job_code not in(select job_code from jobtype))
+21)SELECT CASE WHEN   EXISTS(select * from jobtype where job_code not in(select distinct job_code from employee where jobtype.job_code
+=employee.job_code))
 THEN 'TRUE' ELSE 'FALSE' END;
 
 
@@ -87,8 +93,9 @@ where employee.job_code=jobtype.job_code);
 inner join department where employee.employee_number=department.manager_employee_number;
 
 
-27)select employee_number from employee where salary_amount>(select avg(salary_amount) from employee);
+27)select employee_number from ( select employee_number from employee where salary_amount>(select avg(salary_amount) from employee))as e;
 
-28)select employee_number,department_number,concat(last_name,'.',first_name),salary_amount from employee e where 
-salary_amount>(select avg(salary_amount) from employee e2 
-where e.department_number=e2.department_number ) order by department_number,salary_amount desc;
+28)select employee_number,department_number from (select employee_number,department_number from employee as e where salary_amount>(select avg(salary_amount) 
+from employee as e1
+where e.department_number=e1.department_number))as ert 
+order by department_number,salary_amount desc;
